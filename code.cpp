@@ -5,13 +5,12 @@ using namespace std;
 // Задание 1: Однонаправленный список
 class SinglyLinkedList {
 private:
-    // Структура для представления узла однонаправленного списка
     struct Node {
         int data;
         Node* next;
         Node(int d) : data(d), next(nullptr) {}
     };
-    Node* head; // Указатель на голову списка
+    Node* head;
 
 public:
     SinglyLinkedList() : head(nullptr) {}
@@ -63,15 +62,14 @@ public:
 // Задание 2: Двунаправленный список
 class DoublyLinkedList {
 private:
-    // Структура для представления узла двунаправленного списка
     struct Node {
         int data;
         Node* prev;
         Node* next;
         Node(int d) : data(d), prev(nullptr), next(nullptr) {}
     };
-    Node* head; // Указатель на голову списка
-    Node* tail; // Указатель на хвост списка
+    Node* head;
+    Node* tail;
 
 public:
     DoublyLinkedList() : head(nullptr), tail(nullptr) {}
@@ -85,6 +83,39 @@ public:
             tail->next = newNode;
             newNode->prev = tail;
             tail = newNode;
+        }
+    }
+
+    // Метод для удаления всех элементов с заданным значением
+    void remove(int value) {
+        Node* current = head;
+
+        // Удаление всех вхождений в начале списка
+        while (current && current->data == value) {
+            Node* temp = current;
+            head = current->next;
+            if (head) head->prev = nullptr;
+            delete temp;
+            current = head;
+        }
+
+        // Удаление всех вхождений после начала списка
+        while (current) {
+            if (current->data == value) {
+                Node* temp = current;
+                if (current->next) {
+                    current->next->prev = current->prev;
+                } else { // Если удаляем последний элемент
+                    tail = current->prev;
+                }
+                if (current->prev) {
+                    current->prev->next = current->next;
+                }
+                delete temp;
+                current = current->next;
+            } else {
+                current = current->next;
+            }
         }
     }
 
@@ -128,8 +159,7 @@ public:
     }
 };
 
-
-// Функция для проверки вводимых данных 
+// Функция для проверки вводимых данных
 int getValidatedInt(const string& prompt) {
     int value;
     while (true) {
@@ -175,6 +205,12 @@ int main() {
         dList.add(getValidatedInt(""));
     }
     cout << "Список до перестановки: ";
+    dList.print();
+
+    // Удаление элементов по значению
+    int valueToRemoveDoubly = getValidatedInt("Введите значение для удаления из двунаправленного списка: ");
+    dList.remove(valueToRemoveDoubly);
+    cout << "Список после удаления всех " << valueToRemoveDoubly << ": ";
     dList.print();
 
     // Перестановка элементов между первым и последним вхождением E
